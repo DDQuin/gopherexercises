@@ -9,6 +9,7 @@ import (
 	"os"
 	"runtime"
 	"strings"
+	"time"
 )
 
 func readCsvFile(filePath string) [][]string {
@@ -30,15 +31,30 @@ func readCsvFile(filePath string) [][]string {
 func main() {
 	reader := bufio.NewReader(os.Stdin)
 	file_name := flag.String("file", "problems.csv", "Specify csv file to read questions from")
+	time_limit := flag.Int("limit", 30, "Time limit in seconds")
 	flag.Parse()
 	records := readCsvFile(*file_name)
+	
+	timer := time.NewTimer(time.Duration(*time_limit) * time.Second)
+	
 	correct := 0
+	problemloop:
 	for _, v := range records {
 		question, answer := v[0], v[1]
 		fmt.Println("What is the answer to " + question + "?")
-		input := get_input(reader)		
-		if strings.Compare(input, answer) == 0 {
-			correct++
+		answer_ch := make(chan string)
+		go func()  {
+			input := get_input(reader)		
+			answer_ch <- input
+		}()
+		select {
+		case <-timer.C:
+			fmt.Println()
+			break problemloop
+		case input := <-answer_ch:
+			if strings.Compare(input, answer) == 0 {
+				correct++
+			}
 		}
 	}
 	fmt.Println("You got", correct, "out of", len(records))
