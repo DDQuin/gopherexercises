@@ -33,22 +33,23 @@ func main() {
 	flag.Parse()
 	records := readCsvFile(*file_name)
 	correct := 0
-
 	for _, v := range records {
 		question, answer := v[0], v[1]
 		fmt.Println("What is the answer to " + question + "?")
-		input, _ := reader.ReadString('\n')
-		if runtime.GOOS == "windows" {
-		  input = strings.TrimRight(input, "\r\n")
-		} else {
-		  input = strings.TrimRight(input, "\n")
-		}
-
+		input := get_input(reader)		
 		if strings.Compare(input, answer) == 0 {
 			correct++
 		}
 	}
-
 	fmt.Println("You got", correct, "out of", len(records))
+}
 
+func get_input(reader *bufio.Reader) string {
+	input, _ := reader.ReadString('\n')
+	if runtime.GOOS == "windows" {
+	  input = strings.TrimRight(input, "\r\n")
+	} else {
+	  input = strings.TrimRight(input, "\n")
+	}
+	return input
 }
