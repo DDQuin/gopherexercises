@@ -3,6 +3,7 @@ package main
 import (
 	"bufio"
 	"encoding/csv"
+	"flag"
 	"fmt"
 	"log"
 	"os"
@@ -28,7 +29,9 @@ func readCsvFile(filePath string) [][]string {
 	
 func main() {
 	reader := bufio.NewReader(os.Stdin)
-	records := readCsvFile("problems.csv")
+	file_name := flag.String("file", "problems.csv", "Specify csv file to read questions from")
+	flag.Parse()
+	records := readCsvFile(*file_name)
 	correct := 0
 
 	for _, v := range records {
@@ -47,6 +50,5 @@ func main() {
 	}
 
 	fmt.Println("You got", correct, "out of", len(records))
-
 
 }
