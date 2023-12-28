@@ -45,7 +45,7 @@ func YAMLHandler(yamlBytes []byte, fallback http.Handler) (http.HandlerFunc, err
 	}
 
 	pathToUrls := buildMap(pathUrls)
-	
+
 	return MapHandler(pathToUrls, fallback), nil
 }
 
